@@ -1,23 +1,36 @@
 # AI Video Editing Skill Platform
 
-This project demonstrates a modular AI video editing workflow focused on:
+This project is a modular AI video editing platform focused on creating digital-human and virtual-content workflows. It includes the following capabilities:
 
-- face swap
-- avatar replacement
-- lip sync
-- background replacement
-- unified video processing pipeline
+- Face swap
+- Avatar replacement
+- Lip sync
+- Background replacement
+- Unified pipeline orchestration
 
 ## Overview
 
-The project is built as an engineering scaffold for AI avatar and digital human workflows. It includes:
+The repository is designed to provide a practical engineering scaffold for AI avatar workflows, digital human generation, and virtual scene transformation. It is structured as a modular system where each editing skill is developed independently and can be chained together through a unified processing pipeline.
 
-- a modular skill layer for each editing task
-- a unified API layer
-- a simple web demo
-- a pipeline orchestrator for end-to-end workflow composition
+The project currently includes:
 
-## Project structure
+- modular skill implementation
+- a FastAPI-based API layer
+- a browser demo interface
+- workflow orchestration logic
+- local Wav2Lip integration support
+- enhanced face blending and stability logic
+
+## Project goals
+
+- Replace a face in a video with a target human face
+- Replace the character region with a target avatar image
+- Synchronize mouth motion to a speech audio stream
+- Replace the original background with a virtual scene
+- Compose these capabilities into one end-to-end pipeline
+- Expose the features via API and prototype UI
+
+## Architecture
 
 ```text
 .
@@ -28,8 +41,6 @@ The project is built as an engineering scaffold for AI avatar and digital human 
 ├── README.md
 ├── WAV2LIP_SETUP.md
 ├── config.yaml
-├── scripts/
-│   └── setup_wav2lip.sh
 ├── templates/
 │   └── index.html
 ├── skill/
@@ -43,63 +54,93 @@ The project is built as an engineering scaffold for AI avatar and digital human 
 │   ├── __init__.py
 │   ├── video_reader.py
 │   ├── video_writer.py
-│   ├── color_match.py
-│   ├── lighting_match.py
-│   ├── temporal_smooth.py
 │   ├── face_swap.py
 │   ├── avatar_replace.py
 │   ├── background_replace.py
-│   └── lip_sync.py
+│   ├── lip_sync.py
+│   ├── color_match.py
+│   ├── lighting_match.py
+│   └── temporal_smooth.py
+├── scripts/
+│   └── setup_wav2lip.sh
+├── checkpoints/
+│   └── .gitkeep
+├── uploads/
+│   └── .gitkeep
 ├── outputs/
-└── checkpoints/
+│   └── .gitkeep
+├── .gitignore
+└── LICENSE
 ```
+
+## Features
+
+### 1. Face swap
+The face swap skill detects prominent faces in the source image and target video frame, aligns them, and applies color and lighting correction before blending them into the frame.
+
+### 2. Avatar replacement
+The avatar replacement skill replaces the character region with a target avatar image. This is suitable for digital human and virtual presenter workflows.
+
+### 3. Lip sync
+The lip sync module integrates with Wav2Lip locally. It expects a valid Wav2Lip repository and checkpoint to be available on the machine running the pipeline.
+
+### 4. Background replacement
+The background replacement skill can replace the source background with a custom scene image or virtual environment to improve storytelling and production quality.
+
+### 5. Unified workflow
+Multiple skills can be chained into a single pipeline so users can perform end-to-end video editing from a single request.
 
 ## Quick start
 
+### 1. Install dependencies
+
 ```bash
 pip install -r requirements.txt
-uvicorn api:app --host 0.0.0.0 --port 8000 --reload
 ```
 
-Then open the demo UI:
+### 2. Prepare Wav2Lip locally
 
-```text
-http://localhost:8000/
-```
+This project uses a real Wav2Lip integration for lip-sync processing. The model files are too large to be committed to GitHub, so they must be set up locally.
 
-### Demo backend
-
-```bash
-uvicorn api_demo:app --host 0.0.0.0 --port 8000 --reload
-```
-
-## Wav2Lip setup
-
-This project includes real lip-sync integration using Wav2Lip. It expects a local checkout of the official Wav2Lip repository and a valid checkpoint file.
-
-### Install Wav2Lip
-
-Clone the repository next to this project:
-
-```bash
-git clone https://github.com/justinjohn0306/Wav2Lip.git ../Wav2Lip
-```
-
-Then download a compatible checkpoint and place it under:
-
-```text
-./checkpoints/wav2lip.pth
-```
-
-You can also use the helper script:
+Use the helper script:
 
 ```bash
 bash scripts/setup_wav2lip.sh
 ```
 
+Or clone manually:
+
+```bash
+git clone https://github.com/justinjohn0306/Wav2Lip.git ../Wav2Lip
+```
+
+Then place the checkpoint at:
+
+```text
+./checkpoints/wav2lip.pth
+```
+
 See `WAV2LIP_SETUP.md` for the full setup guide.
 
-## API usage
+### 3. Run the API
+
+```bash
+uvicorn api:app --host 0.0.0.0 --port 8000 --reload
+```
+
+### 4. Run the demo UI
+
+```bash
+uvicorn api_demo:app --host 0.0.0.0 --port 8000 --reload
+```
+
+Then open:
+
+```text
+http://localhost:8000/
+```
+
+## API endpoints
 
 ### Face swap
 
@@ -107,7 +148,7 @@ See `WAV2LIP_SETUP.md` for the full setup guide.
 POST /skills/face_swap
 ```
 
-### Avatar replace
+### Avatar replacement
 
 ```http
 POST /skills/avatar_replace
@@ -119,27 +160,59 @@ POST /skills/avatar_replace
 POST /skills/lip_sync
 ```
 
-### Background replace
+### Background replacement
 
 ```http
 POST /skills/background_replace
 ```
 
-### Full pipeline
+### End-to-end workflow
 
 ```http
 POST /pipeline/video_edit
 ```
 
+## Example CLI usage
+
+```bash
+python run.py \
+  --input assets/input_video.mp4 \
+  --source-face assets/source_face.png \
+  --audio assets/input_audio.wav \
+  --background assets/background.jpg \
+  --output outputs/final.mp4 \
+  --wav2lip-dir ../Wav2Lip \
+  --checkpoint ./checkpoints/wav2lip.pth
+```
+
 ## Notes
 
-This repository is a practical prototype focused on modular design and realistic video-editing workflow composition. The advanced face swapping logic includes:
+This repository serves as a practical engineering prototype for AI video generation workflows. It balances speed of development with a realistic architecture for AI avatar and digital-human content production.
 
-- color matching
-- lighting normalization
-- temporal smoothing
-- blending stability improvements
+Important implementation notes:
 
-The lip-sync step is wired to a real Wav2Lip inference script and requires the model directory and checkpoint file to exist locally. This is intentional: the model files are too large to be committed to GitHub directly.
+- The project is intentionally modular so each skill can be independently optimized.
+- The Wav2Lip model and checkpoint are external runtime dependencies.
+- Output files and uploaded assets are treated as local runtime artifacts and are excluded from Git tracking.
+- The face-swap logic includes color matching, lighting normalization, and temporal smoothing to reduce obvious artifacts.
 
-This is intended as a solid foundation for future AI avatar, digital human, and virtual video creation workflows.
+## Use cases
+
+- AI presenter generation
+- Digital human creation
+- Virtual avatar customization
+- Short-form content production
+- Virtual environments and advertising scenes
+- Character replacement for storytelling and brand content
+
+## Future directions
+
+- improve face blurring and temporal consistency
+- enhance avatar-quality blending
+- add fine-grained background segmentation and modeling
+- improve integration with more advanced speech-driven animation systems
+- package the workflow as a more polished product-ready service
+
+## License
+
+This project is distributed under the MIT license unless otherwise noted in third-party dependencies.
