@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Avatar Studio</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: linear-gradient(135deg, #020817, #0f172a 45%, #111827);
+      color: #e2e8f0;
+      font-family: Arial, sans-serif;
+    }
+    .page { max-width: 1400px; margin: 0 auto; padding: 32px 20px 48px; }
+    .topbar {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 24px; padding: 14px 18px; background: rgba(15,23,42,0.75);
+      border: 1px solid rgba(148,163,184,0.2); border-radius: 14px;
+    }
+    .brand { font-size: 1.3rem; font-weight: 700; }
+    .badge {
+      background: rgba(34,197,94,0.18); color: #86efac; border: 1px solid rgba(34,197,94,0.4);
+      border-radius: 999px; padding: 8px 12px; font-size: 0.8rem; font-weight: 600;
+    }
+    .layout { display: grid; grid-template-columns: 420px 1fr; gap: 24px; }
+    .panel {
+      background: rgba(15,23,42,0.8); border: 1px solid rgba(148,163,184,0.2);
+      border-radius: 18px; padding: 22px; box-shadow: 0 10px 25px rgba(0,0,0,0.18);
+    }
+    .field { display: grid; gap: 8px; margin-bottom: 16px; }
+    label { font-size: 0.92rem; color: #cbd5e1; font-weight: 600; }
+    input[type="file"], input[type="text"] {
+      width: 100%; padding: 12px 13px; border-radius: 10px; border: 1px solid rgba(148,163,184,0.28);
+      background: rgba(15,23,42,0.9); color: white;
+    }
+    .button-row { display: flex; gap: 12px; }
+    button {
+      border: none; border-radius: 12px; font-size: 1rem; font-weight: 700; cursor: pointer;
+      padding: 14px 18px;
+    }
+    .primary { background: linear-gradient(135deg, #22c55e, #16a34a); color: white; flex: 1; }
+    .secondary { background: rgba(59,130,246,0.18); color: #bfdbfe; border: 1px solid rgba(96,165,250,0.4); }
+    .video-box { width: 100%; min-height: 360px; border-radius: 16px; overflow: hidden; border: 1px solid rgba(148,163,184,0.25); background: #020617; }
+    video { width: 100%; height: 100%; display: block; background: black; }
+    .status {
+      margin-top: 14px; padding: 12px 14px; border-radius: 12px; background: rgba(15,118,110,0.12);
+      border: 1px solid rgba(45,212,191,0.25); color: #a7f3d0; font-size: 0.92rem;
+    }
+    .error {
+      background: rgba(127,29,29,0.18); border-color: rgba(248,113,113,0.42); color: #fecaca;
+    }
+    .info { display: flex; gap: 12px; flex-wrap: wrap; color: #cbd5e1; font-size: 0.85rem; }
+    .chip {
+      background: rgba(148,163,184,0.08); border: 1px solid rgba(148,163,184,0.2);
+      padding: 8px 10px; border-radius: 999px;
+    }
+    @media (max-width: 980px) { .layout { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header class="topbar">
+      <div class="brand">AI Avatar Studio</div>
+      <div class="badge">face swap + avatar + lip sync</div>
+    </header>
+
+    <div class="layout">
+      <div class="panel">
+        <h2>Generate AI Avatar Video</h2>
+        <form id="demoForm" enctype="multipart/form-data">
+          <div class="field">
+            <label for="input_video">Original video</label>
+            <input type="file" id="input_video" name="input_video" accept="video/*" required />
+          </div>
+
+          <div class="field">
+            <label for="source_face">Face / avatar image</label>
+            <input type="file" id="source_face" name="source_face" accept="image/*" required />
+          </div>
+
+          <div class="field">
+            <label for="audio">Audio for lip sync (optional)</label>
+            <input type="file" id="audio" name="audio" accept="audio/*" />
+          </div>
+
+          <div class="field">
+            <label for="background">Virtual background (optional)</label>
+            <input type="file" id="background" name="background" accept="image/*" />
+          </div>
+
+          <div class="field">
+            <label for="wav2lip_dir">Wav2Lip directory</label>
+            <input type="text" id="wav2lip_dir" name="wav2lip_dir" value="./Wav2Lip" />
+          </div>
+
+          <div class="field">
+            <label for="checkpoint_path">Checkpoint path</label>
+            <input type="text" id="checkpoint_path" name="checkpoint_path" value="./checkpoints/wav2lip.pth" />
+          </div>
+
+          <div class="button-row">
+            <button type="submit" class="primary">Generate</button>
+            <button type="button" class="secondary" onclick="resetForm()">Reset</button>
+          </div>
+        </form>
+        <div id="statusBox" class="status" style="display:none;"></div>
+      </div>
+
+      <div class="panel">
+        <h2>Preview</h2>
+        <div class="video-box">
+          <video id="videoResult" controls muted playsinline></video>
+        </div>
+        <div class="info" style="margin-top: 16px;">
+          <div class="chip">Face swap</div>
+          <div class="chip">Avatar replacement</div>
+          <div class="chip">Lip sync</div>
+          <div class="chip">Background replace</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const form = document.getElementById('demoForm');
+    const statusBox = document.getElementById('statusBox');
+    const videoResult = document.getElementById('videoResult');
+
+    function resetForm() {
+      form.reset();
+      statusBox.style.display = 'none';
+      videoResult.removeAttribute('src');
+    }
+
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      statusBox.style.display = 'block';
+      statusBox.classList.remove('error');
+      statusBox.textContent = 'Generating AI avatar video, please wait...';
+
+      const formData = new FormData(form);
+      try {
+        const response = await fetch('/api/demo/ai_avatar', {
+          method: 'POST',
+          body: formData,
+        });
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.detail || 'Generation failed');
+
+        const videoUrl = '/' + data.result_path.replace(/\\/g, '/');
+        videoResult.src = videoUrl;
+        videoResult.load();
+        statusBox.classList.remove('error');
+        statusBox.textContent = 'Generation completed successfully.';
+      } catch (err) {
+        statusBox.classList.add('error');
+        statusBox.textContent = 'Error: ' + err.message;
+      }
+    });
+  </script>
+</body>
+</html>

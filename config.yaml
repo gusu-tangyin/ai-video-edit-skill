@@ -1,0 +1,21 @@
+project:
+  name: ai-video-edit-skill
+  output_dir: outputs
+  fps: 30
+
+face_swap:
+  enabled: true
+  color_match: true
+  lighting_match: true
+  temporal_smoothing: true
+  alpha: 0.75
+
+avatar_replace:
+  enabled: true
+
+lip_sync:
+  enabled: true
+  requires_wav2lip: true
+
+background_replace:
+  enabled: true
