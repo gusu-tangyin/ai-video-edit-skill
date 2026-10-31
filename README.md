@@ -26,7 +26,10 @@ The project is built as an engineering scaffold for AI avatar and digital human 
 ├── run.py
 ├── requirements.txt
 ├── README.md
+├── WAV2LIP_SETUP.md
 ├── config.yaml
+├── scripts/
+│   └── setup_wav2lip.sh
 ├── templates/
 │   └── index.html
 ├── skill/
@@ -47,7 +50,8 @@ The project is built as an engineering scaffold for AI avatar and digital human 
 │   ├── avatar_replace.py
 │   ├── background_replace.py
 │   └── lip_sync.py
-└── outputs/
+├── outputs/
+└── checkpoints/
 ```
 
 ## Quick start
@@ -68,6 +72,32 @@ http://localhost:8000/
 ```bash
 uvicorn api_demo:app --host 0.0.0.0 --port 8000 --reload
 ```
+
+## Wav2Lip setup
+
+This project includes real lip-sync integration using Wav2Lip. It expects a local checkout of the official Wav2Lip repository and a valid checkpoint file.
+
+### Install Wav2Lip
+
+Clone the repository next to this project:
+
+```bash
+git clone https://github.com/justinjohn0306/Wav2Lip.git ../Wav2Lip
+```
+
+Then download a compatible checkpoint and place it under:
+
+```text
+./checkpoints/wav2lip.pth
+```
+
+You can also use the helper script:
+
+```bash
+bash scripts/setup_wav2lip.sh
+```
+
+See `WAV2LIP_SETUP.md` for the full setup guide.
 
 ## API usage
 
@@ -109,5 +139,7 @@ This repository is a practical prototype focused on modular design and realistic
 - lighting normalization
 - temporal smoothing
 - blending stability improvements
+
+The lip-sync step is wired to a real Wav2Lip inference script and requires the model directory and checkpoint file to exist locally. This is intentional: the model files are too large to be committed to GitHub directly.
 
 This is intended as a solid foundation for future AI avatar, digital human, and virtual video creation workflows.
