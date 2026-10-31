@@ -3,35 +3,40 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>AI Avatar Studio</title>
+  <title>AI Avatar Studio Dashboard</title>
   <style>
-    * { box-sizing: border-box; }
     :root {
-      --bg: #020817;
-      --panel: rgba(15, 23, 42, 0.82);
-      --panel-border: rgba(148, 163, 184, 0.18);
-      --text: #e2e8f0;
-      --muted: #cbd5e1;
-      --green: #22c55e;
-      --green-soft: rgba(34, 197, 94, 0.16);
+      --bg: #050b16;
+      --panel: rgba(15, 23, 42, 0.8);
+      --panel-strong: rgba(15, 23, 42, 0.96);
+      --border: rgba(148, 163, 184, 0.2);
+      --text: #e5eefb;
+      --muted: #9fb0cb;
+      --green: #34d399;
+      --green-soft: rgba(52, 211, 153, 0.12);
       --blue: #60a5fa;
-      --blue-soft: rgba(59, 130, 246, 0.16);
-      --warning: #fbbf24;
-      --danger: #f87171;
-      --shadow: rgba(0, 0, 0, 0.2);
+      --blue-soft: rgba(96, 165, 250, 0.12);
+      --purple: #a78bfa;
+      --purple-soft: rgba(167, 139, 250, 0.12);
+      --yellow: #fbbf24;
+      --yellow-soft: rgba(251, 191, 36, 0.12);
+      --red: #f87171;
+      --red-soft: rgba(248, 113, 113, 0.12);
+      --shadow: rgba(0, 0, 0, 0.28);
     }
 
+    * { box-sizing: border-box; }
     body {
       margin: 0;
-      background: linear-gradient(135deg, #020817, #0f172a 45%, #111827);
+      background: linear-gradient(135deg, #020817, #0b1120 40%, #0f172a 100%);
       color: var(--text);
       font-family: Inter, "Segoe UI", Arial, sans-serif;
     }
 
     .page {
-      max-width: 1440px;
+      max-width: 1500px;
       margin: 0 auto;
-      padding: 32px 20px 52px;
+      padding: 28px 20px 40px;
     }
 
     .topbar {
@@ -39,49 +44,66 @@
       justify-content: space-between;
       align-items: center;
       gap: 16px;
-      margin-bottom: 24px;
-      padding: 16px 20px;
-      background: rgba(15, 23, 42, 0.76);
-      border: 1px solid var(--panel-border);
+      padding: 16px 18px;
+      background: rgba(15, 23, 42, 0.8);
+      border: 1px solid var(--border);
       border-radius: 16px;
       box-shadow: 0 10px 30px var(--shadow);
-      backdrop-filter: blur(10px);
+      backdrop-filter: blur(6px);
     }
 
     .brand {
-      font-size: 1.38rem;
-      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      font-weight: 800;
       letter-spacing: 0.04em;
     }
 
-    .meta-badge {
-      background: var(--green-soft);
-      color: #86efac;
-      border: 1px solid rgba(34, 197, 94, 0.42);
+    .logo {
+      width: 32px;
+      height: 32px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, var(--green), var(--blue));
+      box-shadow: 0 8px 18px rgba(52, 211, 153, 0.35);
+    }
+
+    .nav {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .nav-pill {
+      background: rgba(148, 163, 184, 0.08);
+      border: 1px solid rgba(148, 163, 184, 0.2);
+      color: var(--muted);
+      padding: 8px 10px;
       border-radius: 999px;
-      padding: 8px 12px;
       font-size: 0.8rem;
-      font-weight: 700;
+      font-weight: 600;
     }
 
     .layout {
       display: grid;
-      grid-template-columns: 440px 1fr;
+      grid-template-columns: 420px minmax(0, 1fr);
       gap: 24px;
+      margin-top: 26px;
     }
 
     .panel {
       background: var(--panel);
-      border: 1px solid var(--panel-border);
+      border: 1px solid var(--border);
       border-radius: 18px;
+      box-shadow: 0 12px 28px var(--shadow);
       padding: 22px;
-      box-shadow: 0 10px 25px var(--shadow);
     }
 
-    h2 {
+    .panel h2, .panel h3 {
       margin: 0 0 18px;
-      font-size: 1.2rem;
-      font-weight: 700;
+      font-size: 1.12rem;
+      letter-spacing: 0.02em;
     }
 
     form {
@@ -96,48 +118,47 @@
 
     label {
       color: var(--muted);
-      font-size: 0.92rem;
-      font-weight: 600;
+      font-size: 0.9rem;
+      font-weight: 700;
     }
 
     input[type="file"], input[type="text"] {
       width: 100%;
       padding: 12px 13px;
-      border-radius: 12px;
       border: 1px solid rgba(148, 163, 184, 0.22);
-      background: rgba(15, 23, 42, 0.9);
+      border-radius: 12px;
+      background: rgba(15, 23, 42, 0.92);
       color: white;
       outline: none;
     }
 
     input[type="file"]:focus, input[type="text"]:focus {
       border-color: rgba(96, 165, 250, 0.8);
-      box-shadow: 0 0 0 2px rgba(96, 165, 250, 0.2);
+      box-shadow: 0 0 0 2px rgba(96, 165, 250, 0.18);
     }
 
     .step-grid {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: 10px;
-      margin-top: 4px;
     }
 
     .checkbox-box {
       display: flex;
       align-items: center;
-      gap: 9px;
-      padding: 10px 12px;
-      background: rgba(148, 163, 184, 0.06);
+      gap: 8px;
+      background: rgba(148, 163, 184, 0.05);
       border: 1px solid rgba(148, 163, 184, 0.18);
       border-radius: 12px;
-      color: var(--muted);
+      padding: 10px 12px;
       font-size: 0.9rem;
+      color: var(--text);
     }
 
     .checkbox-box input {
-      accent-color: var(--green);
       width: 16px;
       height: 16px;
+      accent-color: var(--green);
     }
 
     .button-row {
@@ -149,8 +170,9 @@
     button {
       border: none;
       border-radius: 12px;
-      font-size: 1rem;
-      font-weight: 700;
+      padding: 13px 16px;
+      font-weight: 800;
+      letter-spacing: 0.01em;
       cursor: pointer;
       transition: transform 0.15s ease, filter 0.15s ease;
     }
@@ -162,101 +184,117 @@
 
     .primary {
       flex: 1;
-      background: linear-gradient(135deg, #22c55e, #16a34a);
-      color: white;
-      padding: 14px 18px;
+      background: linear-gradient(135deg, var(--green), #10b981);
+      color: #062313;
     }
 
     .secondary {
       background: rgba(96, 165, 250, 0.12);
-      border: 1px solid rgba(96, 165, 250, 0.3);
-      color: #bfdbfe;
-      padding: 14px 18px;
+      border: 1px solid rgba(96, 165, 250, 0.32);
+      color: #bbe3ff;
     }
 
-    .preview-panel {
+    .status {
+      display: none;
+      margin-top: 12px;
+      padding: 12px 14px;
+      border-radius: 12px;
+      font-size: 0.92rem;
+      background: rgba(15, 118, 110, 0.12);
+      border: 1px solid rgba(45, 212, 191, 0.28);
+      color: #a7f3d0;
+    }
+
+    .status.error {
+      background: rgba(127, 29, 29, 0.14);
+      border-color: rgba(248, 113, 113, 0.4);
+      color: #fecaca;
+    }
+
+    .workspace {
       display: grid;
+      grid-template-rows: auto auto 1fr;
       gap: 18px;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .stat-card {
+      background: rgba(15, 23, 42, 0.7);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 14px 16px;
+    }
+
+    .stat-label {
+      color: var(--muted);
+      font-size: 0.75rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .stat-value {
+      margin-top: 8px;
+      font-size: 1.6rem;
+      font-weight: 800;
+    }
+
+    .video-wrap {
+      background: rgba(15, 23, 42, 0.72);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 12px;
     }
 
     .video-box {
       width: 100%;
-      min-height: 380px;
-      border-radius: 16px;
+      min-height: 420px;
+      border-radius: 12px;
+      background: #020817;
+      border: 1px solid rgba(148, 163, 184, 0.18);
       overflow: hidden;
-      border: 1px solid rgba(148, 163, 184, 0.22);
-      background: #020617;
     }
 
     video {
+      display: block;
       width: 100%;
       height: 100%;
-      display: block;
       background: black;
-    }
-
-    .info-grid {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      color: var(--muted);
-      font-size: 0.85rem;
-    }
-
-    .chip {
-      padding: 8px 10px;
-      border-radius: 999px;
-      border: 1px solid rgba(148, 163, 184, 0.2);
-      background: rgba(148, 163, 184, 0.08);
-    }
-
-    .status {
-      margin-top: 8px;
-      padding: 12px 14px;
-      border-radius: 12px;
-      background: rgba(15, 118, 110, 0.12);
-      border: 1px solid rgba(45, 212, 191, 0.25);
-      color: #a7f3d0;
-      font-size: 0.92rem;
-      display: none;
-    }
-
-    .status.error {
-      background: rgba(127, 29, 29, 0.18);
-      border-color: rgba(248, 113, 113, 0.42);
-      color: #fecaca;
     }
 
     .results-box {
       display: none;
-      padding: 14px 16px;
-      border: 1px solid rgba(148, 163, 184, 0.18);
-      background: rgba(148, 163, 184, 0.04);
-      border-radius: 12px;
+      background: rgba(15, 23, 42, 0.7);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 16px;
+      margin-top: 8px;
     }
 
     .results-box strong {
       display: block;
       margin-bottom: 10px;
-      color: var(--text);
+      font-size: 0.96rem;
     }
 
     .step-list {
       display: flex;
       flex-wrap: wrap;
       gap: 8px;
-      margin-top: 8px;
+      margin-bottom: 12px;
     }
 
     .step-badge {
-      display: inline-flex;
-      align-items: center;
-      padding: 6px 10px;
       border-radius: 999px;
-      font-size: 0.76rem;
-      font-weight: 700;
-      border: 1px solid rgba(34, 197, 94, 0.5);
-      background: rgba(34, 197, 94, 0.12);
+      padding: 6px 10px;
+      font-size: 0.74rem;
+      font-weight: 800;
+      border: 1px solid rgba(52, 211, 153, 0.5);
+      background: rgba(52, 211, 153, 0.11);
       color: #bbf7d0;
     }
 
@@ -265,10 +303,46 @@
       gap: 6px;
       color: var(--muted);
       font-size: 0.85rem;
-      margin-top: 8px;
     }
 
-    @media (max-width: 980px) {
+    .history {
+      display: grid;
+      gap: 12px;
+    }
+
+    .history-item {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 12px;
+      padding: 12px 14px;
+      border-radius: 12px;
+      border: 1px solid rgba(148, 163, 184, 0.18);
+      background: rgba(148, 163, 184, 0.04);
+    }
+
+    .history-info {
+      display: grid;
+      gap: 4px;
+    }
+
+    .history-time {
+      color: var(--muted);
+      font-size: 0.82rem;
+    }
+
+    .history-tag {
+      align-self: center;
+      padding: 5px 8px;
+      border-radius: 999px;
+      font-size: 0.72rem;
+      font-weight: 800;
+    }
+
+    .tag-success { background: var(--green-soft); color: #bbf7d0; }
+    .tag-pending { background: var(--yellow-soft); color: #fcd34d; }
+    .tag-error { background: var(--red-soft); color: #fecaca; }
+
+    @media (max-width: 1100px) {
       .layout {
         grid-template-columns: 1fr;
       }
@@ -278,13 +352,20 @@
 <body>
   <div class="page">
     <header class="topbar">
-      <div class="brand">AI Avatar Studio</div>
-      <div class="meta-badge">face swap + avatar + lip sync</div>
+      <div class="brand">
+        <div class="logo"></div>
+        AI Avatar Studio
+      </div>
+      <div class="nav">
+        <div class="nav-pill">Studio</div>
+        <div class="nav-pill">Projects</div>
+        <div class="nav-pill">History</div>
+      </div>
     </header>
 
     <div class="layout">
       <div class="panel">
-        <h2>Generate AI Avatar Video</h2>
+        <h2>New generation</h2>
         <form id="demoForm" enctype="multipart/form-data">
           <div class="field">
             <label for="input_video">Original video</label>
@@ -297,17 +378,17 @@
           </div>
 
           <div class="field">
-            <label for="target_avatar">Target avatar image (optional)</label>
+            <label for="target_avatar">Target avatar image</label>
             <input type="file" id="target_avatar" name="target_avatar" accept="image/*" />
           </div>
 
           <div class="field">
-            <label for="audio">Audio for lip sync (optional)</label>
+            <label for="audio">Audio for lip sync</label>
             <input type="file" id="audio" name="audio" accept="audio/*" />
           </div>
 
           <div class="field">
-            <label for="background">Virtual background (optional)</label>
+            <label for="background">Virtual background</label>
             <input type="file" id="background" name="background" accept="image/*" />
           </div>
 
@@ -344,7 +425,7 @@
           </div>
 
           <div class="button-row">
-            <button type="submit" class="primary">Generate</button>
+            <button type="submit" class="primary">Generate video</button>
             <button type="button" class="secondary" onclick="resetForm()">Reset</button>
           </div>
         </form>
@@ -352,23 +433,59 @@
         <div id="statusBox" class="status"></div>
       </div>
 
-      <div class="panel preview-panel">
-        <h2>Preview</h2>
-        <div class="video-box">
-          <video id="videoResult" controls muted playsinline></video>
+      <div class="workspace">
+        <div class="stats">
+          <div class="stat-card">
+            <div class="stat-label">Active jobs</div>
+            <div class="stat-value">3</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Completed</div>
+            <div class="stat-value">18</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Avg. time</div>
+            <div class="stat-value">4m 28s</div>
+          </div>
         </div>
 
-        <div class="info-grid">
-          <div class="chip">Face swap</div>
-          <div class="chip">Avatar replacement</div>
-          <div class="chip">Lip sync</div>
-          <div class="chip">Background replace</div>
+        <div class="video-wrap">
+          <div class="video-box">
+            <video id="videoResult" controls muted playsinline></video>
+          </div>
         </div>
 
-        <div id="resultsBox" class="results-box">
-          <strong>Processing summary</strong>
-          <div id="stepList" class="step-list"></div>
-          <div id="metaList" class="meta-list"></div>
+        <div class="panel" style="padding: 18px;">
+          <h3>Latest results</h3>
+          <div class="history">
+            <div class="history-item">
+              <div class="history-info">
+                <strong>Brand training video</strong>
+                <div class="history-time">2 hours ago</div>
+              </div>
+              <div class="history-tag tag-success">Success</div>
+            </div>
+            <div class="history-item">
+              <div class="history-info">
+                <strong>Avatar dubbing demo</strong>
+                <div class="history-time">1 day ago</div>
+              </div>
+              <div class="history-tag tag-pending">Queued</div>
+            </div>
+            <div class="history-item">
+              <div class="history-info">
+                <strong>Background replacement test</strong>
+                <div class="history-time">2 days ago</div>
+              </div>
+              <div class="history-tag tag-error">Failed</div>
+            </div>
+          </div>
+
+          <div id="resultsBox" class="results-box">
+            <strong>Processing summary</strong>
+            <div id="stepList" class="step-list"></div>
+            <div id="metaList" class="meta-list"></div>
+          </div>
         </div>
       </div>
     </div>
@@ -413,10 +530,10 @@
       statusBox.textContent = 'Generating AI avatar video, please wait...';
 
       const formData = new FormData(form);
-      formData.append('face_swap_enabled', formData.get('face_swap_enabled') ? 'true' : 'false');
-      formData.append('avatar_replace_enabled', formData.get('avatar_replace_enabled') ? 'true' : 'false');
-      formData.append('lip_sync_enabled', formData.get('lip_sync_enabled') ? 'true' : 'false');
-      formData.append('background_replace_enabled', formData.get('background_replace_enabled') ? 'true' : 'false');
+      formData.set('face_swap_enabled', formData.get('face_swap_enabled') ? 'true' : 'false');
+      formData.set('avatar_replace_enabled', formData.get('avatar_replace_enabled') ? 'true' : 'false');
+      formData.set('lip_sync_enabled', formData.get('lip_sync_enabled') ? 'true' : 'false');
+      formData.set('background_replace_enabled', formData.get('background_replace_enabled') ? 'true' : 'false');
 
       try {
         const response = await fetch('/api/demo/ai_avatar', {
@@ -425,13 +542,10 @@
         });
 
         const data = await response.json();
-        if (!response.ok) {
-          throw new Error(data.detail || 'Generation failed');
-        }
+        if (!response.ok) throw new Error(data.detail || 'Generation failed');
 
-        const resultPath = data.result_path || '';
-        if (resultPath) {
-          videoResult.src = resultPath;
+        if (data.result_path) {
+          videoResult.src = data.result_path;
           videoResult.load();
         }
 
@@ -442,13 +556,13 @@
         const entries = [
           `status: ${data.status || 'success'}`,
           `steps: ${(data.selected_steps || data.steps || []).join(', ') || 'none'}`,
-          `path: ${resultPath || 'n/a'}`
+          `path: ${data.result_path || 'n/a'}`
         ];
 
-        entries.forEach((item) => {
-          const row = document.createElement('div');
-          row.textContent = item;
-          metaList.appendChild(row);
+        entries.forEach((entry) => {
+          const line = document.createElement('div');
+          line.textContent = entry;
+          metaList.appendChild(line);
         });
 
         statusBox.classList.remove('error');
