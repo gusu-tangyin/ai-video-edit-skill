@@ -79,7 +79,9 @@ The project currently includes:
 The face swap skill detects prominent faces in the source image and target video frame, aligns them, and applies color and lighting correction before blending them into the frame.
 
 ### 2. Avatar replacement
-The avatar replacement skill replaces the character region with a target avatar image. This is suitable for digital human and virtual presenter workflows.
+The avatar replacement skill detects the face in the target avatar and video frames, aligns the avatar to the largest detected video face using five facial landmarks, and blends the aligned face with a feathered face mask. If a 106-point face contour is available, it is used for the mask; otherwise, the skill falls back to an oval mask. Frames without a detected target face are preserved.
+
+The first run downloads InsightFace's `buffalo_l` model pack to the local InsightFace model cache. Use avatar images and video subjects that you have permission to edit.
 
 ### 3. Lip sync
 The lip sync module integrates with Wav2Lip locally. It expects a valid Wav2Lip repository and checkpoint to be available on the machine running the pipeline.
@@ -152,6 +154,15 @@ POST /skills/face_swap
 
 ```http
 POST /skills/avatar_replace
+```
+
+The request accepts `input_video`, `target_avatar`, `output_path`, and `fps`. The CLI also supports this skill:
+
+```bash
+python run.py \
+  --input assets/input_video.mp4 \
+  --target-avatar assets/avatar.png \
+  --output outputs/avatar_replace.mp4
 ```
 
 ### Lip sync
